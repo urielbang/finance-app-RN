@@ -8,6 +8,7 @@ const renderExpenseItem = (itemData) => {
       description={itemData.item.title}
       date={itemData.item.date}
       amount={itemData.item.amount}
+      id={itemData.item.id}
     />
   );
 };
