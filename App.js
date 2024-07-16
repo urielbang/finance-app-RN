@@ -28,9 +28,9 @@ export default function App() {
           options={{
             title: "Recent Expenses",
             tabBarLabel: "Recent",
-            tabBarIcon: ({ color, size }) => {
-              <Ionicons name="add" color={color} size={size} />;
-            },
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="hourglass" color={color} size={size} />
+            ),
           }}
         />
         <BottomTabs.Screen
@@ -39,9 +39,9 @@ export default function App() {
           options={{
             title: "All Expenses",
             tabBarLabel: "All Expenses",
-            tabBarIcon: ({ color, size }) => {
-              <Ionicons name="calendar" color={color} size={size} />;
-            },
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="calendar" color={color} size={size} />
+            ),
           }}
         />
       </BottomTabs.Navigator>
