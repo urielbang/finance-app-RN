@@ -2,7 +2,6 @@ import { StyleSheet, View } from "react-native";
 import React, { useContext, useLayoutEffect } from "react";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
-import Button from "../components/UI/Button";
 import { ExpensesContext } from "../store/expenses-contex";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 
@@ -21,37 +20,19 @@ export default function ManageEpensses({ route, navigation }) {
     Dummy.deleteExpense(expendesId);
     navigation.goBack();
   };
-  const cancelHandler = () => {
-    navigation.goBack();
-  };
-  const confirmHandler = () => {
-    if (isEditing) {
-      Dummy.updateExpense(expendesId, {
-        title: "Test!!!!!",
-        amount: 59.66,
-        date: new Date("2024-07-12"),
-      });
-    } else {
-      Dummy.addExpense({
-        title: "Test!!!!!",
-        amount: 59.66,
-        date: new Date("2024-07-12"),
-      });
-    }
-    navigation.goBack();
-  };
+
+  const selectedExpense = Dummy.expenses.find(
+    (expense) => expense.id === expendesId
+  );
 
   return (
     <View style={styles.container}>
-      <ExpenseForm />
-      <View style={styles.buttons}>
-        <Button style={styles.button} mode="flat" onPress={cancelHandler}>
-          Cancel
-        </Button>
-        <Button style={styles.button} onPress={confirmHandler}>
-          {isEditing ? "Update" : "Add"}
-        </Button>
-      </View>
+      <ExpenseForm
+        isEditing={isEditing}
+        expendesId={expendesId}
+        defaultValue={selectedExpense}
+      />
+
       {isEditing && (
         <View style={styles.deleteContainer}>
           <IconButton
@@ -78,14 +59,5 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: GlobalStyles.colors.primary800,
-  },
-  buttons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    minWidth: 120,
-    marginHorizontal: 8,
   },
 });

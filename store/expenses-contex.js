@@ -53,9 +53,9 @@ const Dummy = [
 
 export const ExpensesContext = createContext({
   expenses: [],
-  addExpense: ({ description, amount, date }) => {},
+  addExpense: ({ title, amount, date }) => {},
   deleteExpense: (id) => {},
-  updateExpense: (id, { description, amount, date }) => {},
+  updateExpense: (id, { title, amount, date }) => {},
 });
 
 const expensesReducer = (state, action) => {
@@ -63,11 +63,11 @@ const expensesReducer = (state, action) => {
     case "ADD":
       const id = new Date().toISOString() + Math.random().toString();
       return [
-        ...state,
         {
           ...action.payload,
           id: id,
         },
+        ...state,
       ];
     case "UPDATE":
       const updatebleItem = state.findIndex(
