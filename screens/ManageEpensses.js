@@ -1,12 +1,17 @@
 import { StyleSheet, View } from "react-native";
-import React, { useContext, useLayoutEffect } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import { ExpensesContext } from "../store/expenses-contex";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 import { deleteExpense } from "../util/http";
+import Loading from "../components/UI/Loading";
+import ErrorOverLay from "../components/UI/ErrorOverLay";
 
 export default function ManageEpensses({ route, navigation }) {
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState(null);
+
   const expendesId = route.params?.expendesId;
   const isEditing = !!expendesId;
   const Dummy = useContext(ExpensesContext);
@@ -18,15 +23,32 @@ export default function ManageEpensses({ route, navigation }) {
   }, [navigation, isEditing]);
 
   const deleteHandle = async () => {
-    await deleteExpense(expendesId);
+    setIsFetching(true);
 
-    Dummy.deleteExpense(expendesId);
-    navigation.goBack();
+    try {
+      await deleteExpense(expendesId);
+      Dummy.deleteExpense(expendesId);
+      navigation.goBack();
+    } catch (error) {
+      setError("Could not delete expense please try again later !");
+      setIsFetching(false);
+    }
   };
 
   const selectedExpense = Dummy.expenses.find(
     (expense) => expense.id === expendesId
   );
+
+  const errorHandler = () => {
+    setError(null);
+  };
+
+  if (isFetching) {
+    return <Loading />;
+  }
+  if (error && !isFetching) {
+    return <ErrorOverLay message={error} onConfirm={errorHandler} />;
+  }
 
   return (
     <View style={styles.container}>

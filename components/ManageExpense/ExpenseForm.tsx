@@ -7,9 +7,14 @@ import { useNavigation } from "@react-navigation/native";
 import { getFormattedDate } from "../../util/date";
 import { GlobalStyles } from "../../constants/styles";
 import { storeExpense, updateExpense } from "../../util/http";
+import Loading from "../UI/Loading";
+import ErrorOverLay from "../UI/ErrorOverLay";
 
 export default function ExpenseForm({ isEditing, expendesId, defaultValue }) {
   const navigation = useNavigation();
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState(null);
+
   const [inputValues, setInputValue] = useState({
     amount: {
       value: defaultValue ? defaultValue.amount.toString() : "",
@@ -64,20 +69,39 @@ export default function ExpenseForm({ isEditing, expendesId, defaultValue }) {
       });
       return;
     }
-    if (isEditing) {
-      Dummy.updateExpense(expendesId, expenseData);
-      await updateExpense(expendesId, expenseData);
-    } else {
-      const id = await storeExpense(expenseData);
-      Dummy.addExpense({ ...expenseData, id: id });
+
+    try {
+      if (isEditing) {
+        setIsFetching(true);
+        Dummy.updateExpense(expendesId, expenseData);
+        await updateExpense(expendesId, expenseData);
+        setIsFetching(false);
+      } else {
+        setIsFetching(true);
+
+        const id = await storeExpense(expenseData);
+
+        Dummy.addExpense({ ...expenseData, id: id });
+        setIsFetching(false);
+      }
+      navigation.goBack();
+    } catch (error) {
+      setError("Could not Save data");
+      setIsFetching(false);
     }
-    navigation.goBack();
   };
 
   const formisIvalid =
     !inputValues.amount.isValid ||
     !inputValues.date.isValid ||
     !inputValues.description.isValid;
+
+  if (isFetching) {
+    return <Loading />;
+  }
+  if (error && !isFetching) {
+    return <ErrorOverLay message={error} />;
+  }
   return (
     <View style={styles.containerForm}>
       <Text style={styles.title}>Your Expense</Text>
