@@ -6,6 +6,7 @@ import { ExpensesContext } from "../../store/expenses-contex";
 import { useNavigation } from "@react-navigation/native";
 import { getFormattedDate } from "../../util/date";
 import { GlobalStyles } from "../../constants/styles";
+import { storeExpense } from "../../util/http";
 
 export default function ExpenseForm({ isEditing, expendesId, defaultValue }) {
   const navigation = useNavigation();
@@ -46,7 +47,7 @@ export default function ExpenseForm({ isEditing, expendesId, defaultValue }) {
     };
 
     const amountIsValid = !isNaN(expenseData.amount) && expenseData.amount > 0;
-    const dateIsValid = expenseData.date.toString().trim().length > 0;
+    const dateIsValid = expenseData.date.toString() !== "Invalid Date";
     const descriptionIsValid = expenseData.title.trim().length > 0;
 
     if (!amountIsValid || !dateIsValid || !descriptionIsValid) {
@@ -66,6 +67,7 @@ export default function ExpenseForm({ isEditing, expendesId, defaultValue }) {
     if (isEditing) {
       Dummy.updateExpense(expendesId, expenseData);
     } else {
+      storeExpense(expenseData);
       Dummy.addExpense(expenseData);
     }
     navigation.goBack();

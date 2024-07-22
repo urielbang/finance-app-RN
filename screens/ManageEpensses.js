@@ -4,6 +4,7 @@ import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import { ExpensesContext } from "../store/expenses-contex";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
+import axios from "axios";
 
 export default function ManageEpensses({ route, navigation }) {
   const expendesId = route.params?.expendesId;
