@@ -6,7 +6,7 @@ import { ExpensesContext } from "../../store/expenses-contex";
 import { useNavigation } from "@react-navigation/native";
 import { getFormattedDate } from "../../util/date";
 import { GlobalStyles } from "../../constants/styles";
-import { storeExpense } from "../../util/http";
+import { storeExpense, updateExpense } from "../../util/http";
 
 export default function ExpenseForm({ isEditing, expendesId, defaultValue }) {
   const navigation = useNavigation();
@@ -39,7 +39,7 @@ export default function ExpenseForm({ isEditing, expendesId, defaultValue }) {
     navigation.goBack();
   };
 
-  const submitHandler = () => {
+  const submitHandler = async () => {
     const expenseData = {
       amount: +inputValues.amount.value,
       date: new Date(inputValues.date.value),
@@ -66,9 +66,10 @@ export default function ExpenseForm({ isEditing, expendesId, defaultValue }) {
     }
     if (isEditing) {
       Dummy.updateExpense(expendesId, expenseData);
+      await updateExpense(expendesId, expenseData);
     } else {
-      storeExpense(expenseData);
-      Dummy.addExpense(expenseData);
+      const id = await storeExpense(expenseData);
+      Dummy.addExpense({ ...expenseData, id: id });
     }
     navigation.goBack();
   };

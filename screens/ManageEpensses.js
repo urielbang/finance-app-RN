@@ -4,7 +4,7 @@ import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import { ExpensesContext } from "../store/expenses-contex";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
-import axios from "axios";
+import { deleteExpense } from "../util/http";
 
 export default function ManageEpensses({ route, navigation }) {
   const expendesId = route.params?.expendesId;
@@ -17,7 +17,9 @@ export default function ManageEpensses({ route, navigation }) {
     });
   }, [navigation, isEditing]);
 
-  const deleteHandle = () => {
+  const deleteHandle = async () => {
+    await deleteExpense(expendesId);
+
     Dummy.deleteExpense(expendesId);
     navigation.goBack();
   };
